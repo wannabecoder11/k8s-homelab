@@ -1,0 +1,44 @@
+# Traefik entryPoints configuration for HTTP and HTTPS.
+entryPoints:
+  web:
+    address: ":80"
+  websecure:
+    address: ":443"
+
+persistence:
+  enabled: true
+  size: 128Mi
+
+ports:
+  web:
+    redirections:
+      entryPoint:
+        to: websecure
+        scheme: https
+        permanent: true
+certificatesResolvers:
+  duckdns:
+    acme:
+      email: "{{ letsencrypt_email }}"
+      storage: /data/acme.json
+      dnsChallenge:
+        provider: duckdns
+        delayBeforeCheck: 0
+        disablePropagationCheck: true
+
+env:
+  - name: DUCKDNS_TOKEN
+    valueFrom:
+      secretKeyRef:
+        name: duckdns-secret
+        key: duckdns_token
+  - name: DUCKDNS_PROPAGATION_TIMEOUT
+    value: 60
+deployment:
+  initContainers:
+    - name: volume-permissions
+      image: busybox:latest
+      command: ["sh", "-c", "ls -la /; touch /data/acme.json; chmod -v 600 /data/acme.json"]
+      volumeMounts:
+      - mountPath: /data
+        name: data
