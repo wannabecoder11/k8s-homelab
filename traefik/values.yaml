@@ -21,15 +21,15 @@ ports:
 certificatesResolvers:
   duckdns:
     acme:
-      email: "{{ letsencrypt_email }}"
+      # email: "{{ letsencrypt_email }}"
       storage: /data/acme.json
       dnsChallenge:
         provider: duckdns
-        delayBeforeCheck: 0
+        delayBeforeCheck: 60
         disablePropagationCheck: true
 
 env:
-  - name: letsencrypt_email
+  - name: TRAEFIK_CERTIFICATESRESOLVERS_DUCKDNS_ACME_EMAIL
     valueFrom:
       secretKeyRef:
         name: duckdns-secret
@@ -50,6 +50,3 @@ deployment:
       volumeMounts:
       - mountPath: /data
         name: data
-image:
-  repository: "rancher/mirrored-library-traefik"
-  tag: "3.3.6"
