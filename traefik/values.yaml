@@ -4,7 +4,6 @@ entryPoints:
     address: ":80"
   websecure:
     address: ":443"
-
 persistence:
   enabled: true
   size: 128Mi
@@ -16,6 +15,9 @@ ports:
         to: websecure
         scheme: https
         permanent: true
+    port: 80
+  websecure:
+    port: 443
 certificatesResolvers:
   duckdns:
     acme:
@@ -27,13 +29,19 @@ certificatesResolvers:
         disablePropagationCheck: true
 
 env:
+  - name: letsencrypt_email
+    valueFrom:
+      secretKeyRef:
+        name: duckdns-secret
+        key: duckdns_email
   - name: DUCKDNS_TOKEN
     valueFrom:
       secretKeyRef:
         name: duckdns-secret
         key: duckdns_token
   - name: DUCKDNS_PROPAGATION_TIMEOUT
-    value: 60
+    value: "60"
+
 deployment:
   initContainers:
     - name: volume-permissions
@@ -42,3 +50,6 @@ deployment:
       volumeMounts:
       - mountPath: /data
         name: data
+image:
+  repository: "rancher/mirrored-library-traefik"
+  tag: "3.3.6"
