@@ -2,24 +2,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: prowlarr
+  name: file-browser
   labels:
-    app: prowlarr
+    app: file-browser
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: prowlarr
+      app: file-browser
   template:
     metadata:
       labels:
-        app: prowlarr
+        app: file-browser
     spec:
       containers:
-        - name: prowlarr
-          image: linuxserver/prowlarr:latest
+        - name: file-browser
+          image: "filebrowser/filebrowser:s6"
           ports:
-            - containerPort: 9696
+            - containerPort: 80
           env:
             - name: PUID
               value: "1000"
@@ -32,37 +32,56 @@ spec:
           volumeMounts:
             - name: config
               mountPath: /config
-            - name: media
-              mountPath: /Media
+            - name: database
+              mountPath: /database
+            - name: root
+              mountPath: /srv
       volumes:
         - name: config
           persistentVolumeClaim:
-            claimName: prowlarr-config-pvc
-        - name: media
+            claimName: file-browser-config-pvc
+        - name: database
+          persistentVolumeClaim:
+            claimName: file-browser-db-pvc
+
+        - name: root
           hostPath:
-            path: /media/Media
+            path: /
             type: Directory
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: prowlarr
+  name: file-browser
   labels:
-    app: prowlarr
+    app: file-browser
 spec:
   selector:
-    app: prowlarr
+    app: file-browser
   ports:
     - protocol: TCP
-      port: 9696
-      targetPort: 9696
+      port: 80
+      targetPort: 80
   type: ClusterIP
 
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: prowlarr-config-pvc
+  name: file-browser-config-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: local-path-retain # Replace with your CSI driver’s StorageClass name
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: file-browser-db-pvc
 spec:
   accessModes:
     - ReadWriteOnce
@@ -75,24 +94,21 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: prowlarr-ingress
+  name: file-browser-ingress
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
     traefik.ingress.kubernetes.io/router.tls.certresolver: duckdns
 spec:
   rules:
-    - host: prowlarr.rrk.duckdns.org
+    - host: placeholer
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: prowlarr
+                name: file-browser
                 port:
-                  number: 9696
-  tls:
-    - hosts:
-        - rrk.duckdns.org
-        - "*.rrk.duckdns.org"
+                  number: 80
+
