@@ -1,0 +1,123 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pihole
+  labels:
+    app: pihole
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pihole
+  template:
+    metadata:
+      labels:
+        app: pihole
+    spec:
+      hostNetwork: true
+      containers:
+        - name: pihole
+          image: pihole/pihole:latest
+          envFrom:
+            - secretRef:
+                name: pihole-secret
+          env:
+            - name: TZ
+              value: "Asia/Kolkata"
+            - name: FTLCONF_dns_listeningMode
+              value: 'all'
+            - name: FTLCONF_webserver_port
+              value: '8111'
+          volumeMounts:
+            - name: config
+              mountPath: /etc/pihole
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: pihole-config-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole
+  labels:
+    app: pihole
+spec:
+  selector:
+    app: pihole
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      name: web
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-dns-tcp
+  labels:
+    app: pihole
+spec:
+  selector:
+    app: pihole
+  ports:
+    - protocol: TCP
+      port: 53
+      targetPort: 53
+      name: dnstcp
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pihole-dns-udp
+  labels:
+    app: pihole
+spec:
+  selector:
+    app: pihole
+  ports:
+    - protocol: UDP
+      port: 53
+      targetPort: 53
+      name: dns-udp
+  type: NodePort
+
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pihole-config-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: local-path-retain # Replace with your CSI driver’s StorageClass name
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: pihole-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+    - host: placeholder
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pihole
+                port:
+                  number: 80
+
