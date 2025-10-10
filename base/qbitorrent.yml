@@ -1,0 +1,91 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qbitorrent
+  labels:
+    app: qbitorrent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qbitorrent
+  template:
+    metadata:
+      labels:
+        app: qbitorrent
+    spec:
+      containers:
+        - name: qbitorrent
+          image: ghcr.io/hotio/qbittorrent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: UMASK
+              value: "000"
+            - name: TZ
+              value: "Asia/Kolkata"
+
+          volumeMounts:
+            - name: config
+              mountPath: "/config"
+            - name: media
+              mountPath: /Media
+      volumes:
+        - name: config
+          persistentVolumeClaim:
+            claimName: qbitorrent-config-pvc
+        - name: media
+          hostPath:
+            path: /media/Media
+            type: Directory
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: qbitorrent
+  labels:
+    app: qbitorrent
+spec:
+  selector:
+    app: qbitorrent
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: qbitorrent-config-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Mi
+  storageClassName: local-path-retain # Replace with your CSI driver’s StorageClass name
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qbitorrent-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+spec:
+  rules:
+    - host: placeholder
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: qbitorrent
+                port:
+                  number: 8080
