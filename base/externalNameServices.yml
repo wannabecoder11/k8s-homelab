@@ -1,0 +1,162 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: home-assistant-service
+spec:
+  type: ExternalName
+  externalName: placeholder
+  ports:
+    - port: 8123   # Or the destination port
+      targetPort: 8123
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: home-assistant-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: default-traefik-cors@kubernetescrd
+
+spec:
+  rules:
+    - host: placeholder
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: home-assistant-service 
+                port:
+                  number: 8123
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pve-service
+spec:
+  type: ExternalName
+  externalName: placeholder
+  ports:
+    - port: 8006   # Or the destination port
+      targetPort: 8006
+
+# using ingressRoute traefik CRD as insecureSkipVerify is complicated in k8s native ingress object
+---
+apiVersion: traefik.io/v1alpha1
+kind: ServersTransport
+metadata:
+  name: pvetransport
+  namespace: default
+spec:
+  serverName: 192.168.1.3
+  insecureSkipVerify: true
+
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: pve-ingress
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: placeholder
+      kind: Rule
+      services:
+        - name: pve-service
+          port: 8006
+          scheme: https
+          passHostHeader: true
+          namespace: default
+          serversTransport: pvetransport
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jellyfin-service
+spec:
+  type: ExternalName
+  externalName: placeholder
+  ports:
+    - port: 8096   # Or the destination port
+      targetPort: 8096
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jellyfin-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+
+spec:
+  rules:
+    - host: placeholder
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: jellyfin-service 
+                port:
+                  number: 8096
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: immich-service
+spec:
+  type: ExternalName
+  externalName: placeholder
+  ports:
+    - port: 2283 # Or the destination port
+      targetPort: 2283
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: immich-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+    traefik.ingress.kubernetes.io/router.middlewares: default-traefik-cors@kubernetescrd
+
+spec:
+  rules:
+    - host: placeholder
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: immich-service 
+                port:
+                  number: 2283
+ 
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: traefik-cors
+spec:
+  headers:
+    accessControlAllowMethods:
+      - GET
+      - OPTIONS
+      - PUT
+    accessControlAllowHeaders:
+      - "*"
+    accessControlAllowOriginList:
+      - placeholder
+    customResponseHeaders:
+      Access-Control-Allow-Origin: placeholder
