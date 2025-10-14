@@ -19,7 +19,9 @@ spec:
       containers:
         - name: jellyfin
           image: jellyfin/jellyfin:10.11.0-rc5
-
+          envFrom:
+            - secretRef:
+                name: jellyfin-secret
           env:
             - name: PUID
               value: "1000"
@@ -29,8 +31,6 @@ spec:
               value: "000"
             - name: TZ
               value: "Asia/Kolkata"
-            - name: JELLYFIN_PublishedServerUrl
-              value: placeholder
           volumeMounts:
             - name: config-volume
               mountPath: /config
