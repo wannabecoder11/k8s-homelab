@@ -1,5 +1,3 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
 resources:
   - bazarr.yml
   - sonarr.yml
@@ -17,3 +15,4 @@ resources:
   - qbitorrent.yml
   - storageClass.yml
   - syncthing.yml
+
