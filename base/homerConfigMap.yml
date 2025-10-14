@@ -1,0 +1,9 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: homer-config
+data:
+  # file-like keys
+  config.yml: |
+    placeholder
