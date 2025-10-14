@@ -4,3 +4,5 @@
 secrets.yaml
 defaultTlsCert.yml
 /overlays/
+kustomization.yml
+kustomization.yml
