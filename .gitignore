@@ -2,3 +2,5 @@
 
 /secrets/
 secrets.yaml
+defaultTlsCert.yml
+/overlays/

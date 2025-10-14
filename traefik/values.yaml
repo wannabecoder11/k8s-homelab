@@ -50,3 +50,10 @@ deployment:
       volumeMounts:
       - mountPath: /data
         name: data
+providers:
+  kubernetesCRD:
+    enabled: true
+    allowExternalNameServices: true
+  kubernetesIngress:
+    enabled: true
+    allowExternalNameServices: true
