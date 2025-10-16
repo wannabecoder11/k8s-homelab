@@ -15,4 +15,6 @@ resources:
   - qbitorrent.yml
   - storageClass.yml
   - syncthing.yml
+  - n8n.yml
+  - n8n-postgres.yml
 
