@@ -1,0 +1,91 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    meta.helm.sh/release-name: prometheus-stack
+    meta.helm.sh/release-namespace: monitoring
+  labels:
+    app.kubernetes.io/instance: prometheus-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: grafana
+    app.kubernetes.io/version: 12.2.0
+    helm.sh/chart: grafana-10.1.2
+  name: prometheus-stack-grafana
+  namespace: monitoring
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: placeholder
+    http:
+      paths:
+      - backend:
+          service:
+            name: prometheus-stack-grafana
+            port:
+              number: 80
+        path: /
+        pathType: Prefix
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    meta.helm.sh/release-name: prometheus-stack
+    meta.helm.sh/release-namespace: monitoring
+  labels:
+    app: kube-prometheus-stack-alertmanager
+    app.kubernetes.io/instance: prometheus-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 78.3.2
+    chart: kube-prometheus-stack-78.3.2
+    heritage: Helm
+    release: prometheus-stack
+  name: prometheus-stack-kube-prom-alertmanager
+  namespace: monitoring
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: placeholder
+    http:
+      paths:
+      - backend:
+          service:
+            name: prometheus-stack-kube-prom-alertmanager
+            port:
+              number: 9093
+        path: /
+        pathType: ImplementationSpecific
+
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    meta.helm.sh/release-name: prometheus-stack
+    meta.helm.sh/release-namespace: monitoring
+  labels:
+    app: kube-prometheus-stack-prometheus
+    app.kubernetes.io/instance: prometheus-stack
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kube-prometheus-stack
+    app.kubernetes.io/version: 78.3.2
+    chart: kube-prometheus-stack-78.3.2
+    heritage: Helm
+    release: prometheus-stack
+  name: prometheus-stack-kube-prom-prometheus
+  namespace: monitoring
+spec:
+  ingressClassName: traefik
+  rules:
+  - host: placeholder
+    http:
+      paths:
+      - backend:
+          service:
+            name: prometheus-stack-kube-prom-prometheus
+            port:
+              number: 9090
+        path: /
+        pathType: ImplementationSpecific
