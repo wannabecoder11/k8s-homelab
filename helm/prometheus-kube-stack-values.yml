@@ -4398,9 +4398,38 @@ prometheus:
     - job_name: 'node_exporter_router'
       # The Node Exporter usually listens on port 9100.
       static_configs:
-        - targets: ['192.168.1.1:9100']
+        - targets: 
+            - '192.168.1.1:9100'
           labels:
             instance: 'router'
+    - job_name: 'node_exporter_oraclevm'
+      # The Node Exporter usually listens on port 9100.
+      static_configs:
+        - targets: 
+            - '100.100.144.14:9100'
+          labels:
+            instance: 'oraclevm'
+    - job_name: 'node_exporter_oraclevmpublic'
+      # The Node Exporter usually listens on port 9100.
+      static_configs:
+        - targets: 
+            - '100.108.53.60:9100'
+          labels:
+            instance: 'oraclevmpublic'
+    - job_name: 'node_exporter_dell_ubuntu'
+      # The Node Exporter usually listens on port 9100.
+      static_configs:
+        - targets: 
+            - '100.108.171.92:9100'
+          labels:
+            instance: 'dell_ubuntu'
+    - job_name: 'node_exporter_acer_fedora'
+      # The Node Exporter usually listens on port 9100.
+      static_configs:
+        - targets: 
+            - '100.100.144.34:9100'
+          labels:
+            instance: 'acer_fedora'
     # - job_name: kube-etcd
     #   kubernetes_sd_configs:
     #     - role: node
