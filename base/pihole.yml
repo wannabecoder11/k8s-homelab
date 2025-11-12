@@ -48,8 +48,8 @@ spec:
     app: pihole
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 80
+      port: 8111
+      targetPort: 8111
       name: web
   type: ClusterIP
 ---
@@ -119,5 +119,5 @@ spec:
               service:
                 name: pihole
                 port:
-                  number: 80
+                  number: 8111
 
