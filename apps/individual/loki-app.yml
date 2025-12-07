@@ -1,19 +1,18 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: k8s-alloy-logs
+  name: grafana-loki
   namespace: argocd
 spec:
   project: default
   sources:
   - repoURL: https://grafana.github.io/helm-charts
-    targetRevision: "1.3.0"
-    chart: alloy
+    targetRevision: "6.43.0"
+    chart: loki
     helm:
-      releaseName: k8s-alloy-logs
+      releaseName: loki-install
       valueFiles:
-        - $values/helm/grafana-stack/k8s-monitoring-values.yml
-       # - $values/loki-values.yml
+        - $values/helm/grafana-stack/loki-values.yml
   - repoURL: https://github.com/wannabecoder11/k8s-homelab.git
     targetRevision: "HEAD"
     ref: values
