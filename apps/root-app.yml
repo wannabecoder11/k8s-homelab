@@ -1,0 +1,13 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: all-apps
+spec:
+  source:
+    repoURL: https://github.com/wannabecoder11/k8s-homelab.git
+    targetRevision: HEAD
+    path: apps/individual/  # Folder with MANY app.yaml files
+  destination:
+    namespace: argocd
+  syncPolicy:
+    automated: {}

@@ -1,0 +1,21 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: prometheus-kube-stack
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/wannabecoder11/k8s-homelab.git
+    targetRevision: HEAD
+    path: helm
+    helm:
+      valueFiles:
+        - prometheus-kube-stack-values.yml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
