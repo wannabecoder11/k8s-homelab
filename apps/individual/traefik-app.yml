@@ -5,14 +5,13 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
+  sources:  # ← Fixed: plural + array
   - repoURL: https://github.com/traefik/traefik-helm-chart.git
-
-    chart: traefik
-    targetRevision: "main"
-    helm:
-      valueFiles:
-        - helm/traefik/values.yaml
+    targetRevision: main
+    path: traefik  # ← Fixed: path to chart folder (not chart:)
+  helm:  # ← Your local values
+    valueFiles:
+    - helm/traefik/values.yaml  # ← Path relative to YOUR repo root
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik
