@@ -5,16 +5,18 @@ metadata:
   namespace: argocd
 spec:
   project: default
-  source:
+  sources:
+    - repoURL: https://imio.github.io/helm-charts
+      chart: odoo
+      targetRevision: "0.2.7"
+      helm: 
+        releaseName: odoo-install
+        valueFiles:
+          - $values/helm/odoo/odoo-values.yaml
+    - repoURL: https://github.com/wannabecoder11/k8s-homelab.git
+      targetRevision: "HEAD"
+      ref: values
 
-    chart: sealed-secrets
-    targetRevision: 1.16.1
-    helm:
-      releaseName: sealed-secrets
-    path: helm/odoo
-    helm:
-      valueFiles:
-        - odoo-values.yml
   destination:
     server: https://kubernetes.default.svc
     namespace: default
