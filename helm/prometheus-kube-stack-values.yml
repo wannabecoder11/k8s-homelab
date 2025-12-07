@@ -608,7 +608,7 @@ alertmanager:
 
     ## Hosts must be provided if Ingress is enabled.
     ##
-    hosts: []
+    hosts: [alertmanager.rrk.duckdns.org]
       # - alertmanager.domain.com
 
     ## Paths to use for ingress rules - one path should match the alertmanagerSpec.routePrefix
@@ -1329,7 +1329,7 @@ grafana:
     ##
     # hosts:
     #   - grafana.domain.com
-    hosts: []
+    hosts: [grafana.rrk.duckdns.org]
 
     ## Path for grafana ingress
     path: /
@@ -3752,7 +3752,7 @@ prometheus:
     ##
     # hosts:
     #   - prometheus.domain.com
-    hosts: []
+    hosts: [prometheus.rrk.duckdns.org]
 
     ## Paths to use for ingress rules - one path should match the prometheusSpec.routePrefix
     ##

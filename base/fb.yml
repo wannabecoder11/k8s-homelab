@@ -101,7 +101,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls.certresolver: duckdns
 spec:
   rules:
-    - host: placeholer
+    - host: fb.rrk.duckdns.org
       http:
         paths:
           - path: /

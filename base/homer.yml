@@ -79,7 +79,7 @@ metadata:
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   rules:
-    - host: placeholder
+    - host: homer.rrk.duckdns.org
       http:
         paths:
           - path: /

@@ -22,7 +22,7 @@ metadata:
 
 spec:
   rules:
-    - host: placeholder
+    - host: ha.rrk.duckdns.org
       http:
         paths:
           - path: /
@@ -65,7 +65,8 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: placeholder
+    - match: "Host(`pve.rrk.duckdns.org`)"
+
       kind: Rule
       services:
         - name: pve-service
@@ -98,7 +99,7 @@ metadata:
 
 spec:
   rules:
-    - host: placeholder
+    - host: jellyfin.rrk.duckdns.org
       http:
         paths:
           - path: /
@@ -132,7 +133,7 @@ metadata:
 
 spec:
   rules:
-    - host: placeholder
+    - host: immich.rrk.duckdns.org
       http:
         paths:
           - path: /

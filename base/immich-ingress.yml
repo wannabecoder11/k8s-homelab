@@ -1,0 +1,13 @@
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: traefik-cors
+spec:
+  headers:
+    accessControlAllowOriginList:
+      - "https://immich.rrk.duckdns.org"
+      - "https://homer.rrk.duckdns.org"
+      - "https://ha.rrk.duckdns.org"
+    customResponseHeaders:
+      Access-Control-Allow-Origin: "https://homer.rrk.duckdns.org"
