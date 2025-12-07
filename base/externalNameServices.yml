@@ -5,7 +5,7 @@ metadata:
   name: home-assistant-service
 spec:
   type: ExternalName
-  externalName: placeholder
+  externalName: 192.168.1.3
   ports:
     - port: 8123   # Or the destination port
       targetPort: 8123
@@ -40,7 +40,7 @@ metadata:
   name: pve-service
 spec:
   type: ExternalName
-  externalName: placeholder
+  externalName: 192.168.1.3
   ports:
     - port: 8006   # Or the destination port
       targetPort: 8006
@@ -83,7 +83,7 @@ metadata:
   name: jellyfin-service
 spec:
   type: ExternalName
-  externalName: placeholder
+  externalName: 192.168.1.3
   ports:
     - port: 8096   # Or the destination port
       targetPort: 8096
@@ -116,7 +116,7 @@ metadata:
   name: immich-service
 spec:
   type: ExternalName
-  externalName: placeholder
+  externalName: 192.168.1.3
   ports:
     - port: 2283 # Or the destination port
       targetPort: 2283
@@ -158,6 +158,8 @@ spec:
     accessControlAllowHeaders:
       - "*"
     accessControlAllowOriginList:
-      - placeholder
+      - homer.rrk.duckdns.org
+      - hp.rrk.duckdns.org
+      - immich.rrk.duckdns.org
     customResponseHeaders:
-      Access-Control-Allow-Origin: placeholder
+      Access-Control-Allow-Origin: homer.rrk.duckdns.org
