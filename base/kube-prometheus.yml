@@ -15,7 +15,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: placeholder
+  - host: grafana.rrk.duckdns.org
     http:
       paths:
       - backend:
@@ -46,7 +46,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: placeholder
+  - host: alertmanager.rrk.duckdns.org
     http:
       paths:
       - backend:
@@ -79,7 +79,7 @@ metadata:
 spec:
   ingressClassName: traefik
   rules:
-  - host: placeholder
+  - host: prometheus.rrk.duckdns.org
     http:
       paths:
       - backend:
