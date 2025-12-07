@@ -6,13 +6,17 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://grafana.github.io/helm-charts
-    targetRevision: HEAD
-    path: helm/grafana-stack
+  - repoURL: https://grafana.github.io/helm-charts
+    targetRevision: "1.3.0"
+    chart: alloy
     helm:
+      releaseName: k8s-alloy-logs
       valueFiles:
-        - k8s-monitoring-values.yml
-        - loki-values.yml
+        - $values/k8s-monitoring-values.yml
+       # - $values/loki-values.yml
+  - repoURL: https://github.com/wannabecoder11/k8s-homelab.git
+    targetRevision: "HEAD"
+    ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring

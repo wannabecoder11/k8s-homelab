@@ -8,12 +8,15 @@ spec:
   sources:  # ← Fixed: plural + array
   - repoURL: https://traefik.github.io/charts
     chart: traefik
-    targetRevision: 3.5.3
+    targetRevision: "37.4.0"
     #path: traefik  # ← Fixed: path to chart folder (not chart:)
-  helm:  # ← Your local values
-    releaseName: traefik
-    valueFiles:
-    - helm/traefik/values.yaml  # ← Path relative to YOUR repo root
+    helm:  # ← Your local values
+      releaseName: traefik
+      valueFiles:
+      - $values/helm/traefik/values.yaml  # ← Path relative to YOUR repo root
+  - repoURL: https://github.com/wannabecoder11/k8s-homelab.git
+    targetRevision: "HEAD"
+    ref: values
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik
