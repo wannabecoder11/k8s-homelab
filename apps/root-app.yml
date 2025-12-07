@@ -2,6 +2,8 @@ apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
   name: all-apps
+  namespace: argocd
+
 spec:
   project: default
   source:
@@ -9,6 +11,7 @@ spec:
     targetRevision: HEAD
     path: apps/individual/  # Folder with MANY app.yaml files
   destination:
+    server: https://kubernetes.default.svc
     namespace: argocd
   syncPolicy:
     automated:

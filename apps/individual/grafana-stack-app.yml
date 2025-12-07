@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/wannabecoder11/k8s-homelab.git
+    repoURL: https://grafana.github.io/helm-charts
     targetRevision: HEAD
     path: helm/grafana-stack
     helm:

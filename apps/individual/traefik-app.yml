@@ -6,12 +6,13 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/wannabecoder11/k8s-homelab.git
-    targetRevision: HEAD
-    path: helm/traefik
+  - repoURL: https://github.com/traefik/traefik-helm-chart.git
+
+    chart: traefik
+    targetRevision: "main"
     helm:
       valueFiles:
-        - values.yaml
+        - helm/traefik/values.yaml
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik
