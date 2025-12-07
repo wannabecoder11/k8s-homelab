@@ -15,7 +15,6 @@ spec:
         - $values/helm/prometheus-kube-stack-values.yml
   - repoURL: https://github.com/wannabecoder11/k8s-homelab.git
     targetRevision: HEAD
-    path: helm
     ref: values
   destination:
     server: https://kubernetes.default.svc
