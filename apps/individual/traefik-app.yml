@@ -6,10 +6,10 @@ metadata:
 spec:
   project: default
   sources:  # ← Fixed: plural + array
-  - repoURL: https://github.com/traefik/traefik-helm-chart.git
+  - repoURL: https://traefik.github.io/charts
     chart: traefik
     targetRevision: 3.5.3
-    path: traefik  # ← Fixed: path to chart folder (not chart:)
+    #path: traefik  # ← Fixed: path to chart folder (not chart:)
   helm:  # ← Your local values
     releaseName: traefik
     valueFiles:
