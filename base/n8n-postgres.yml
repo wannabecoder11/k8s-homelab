@@ -23,6 +23,7 @@ data:
     	psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$POSTGRES_DB" <<-EOSQL
     		CREATE USER "${POSTGRES_NON_ROOT_USER}" WITH PASSWORD '${POSTGRES_NON_ROOT_PASSWORD}';
     		GRANT ALL PRIVILEGES ON DATABASE ${POSTGRES_DB} TO "${POSTGRES_NON_ROOT_USER}";
+        CREATE EXTENSION IF NOT EXISTS pgcrypto;
     	EOSQL
     else
     	echo "SETUP INFO: No Environment variables given!"
@@ -47,11 +48,13 @@ spec:
     type: RollingUpdate
   template:
     metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-12-08T12:44:00Z"  # CHANGE EVERY TIME
       labels:
         service: postgres-n8n
     spec:
       containers:
-        - image: postgres:18
+        - image: postgres:11
           name: postgres
           resources:
             limits:

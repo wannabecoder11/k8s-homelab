@@ -30,6 +30,8 @@ spec:
     type: Recreate
   template:
     metadata:
+      annotations:
+        kubectl.kubernetes.io/restartedAt: "2025-12-08T12:43:00Z"  # CHANGE EVERY TIME
       labels:
         service: n8n
     spec:
@@ -70,6 +72,7 @@ spec:
             - name: N8N_PORT
               value: "5678"
           image: n8nio/n8n
+
           name: n8n
           ports:
             - containerPort: 5678
@@ -109,11 +112,7 @@ spec:
   selector:
     service: n8n
 
----
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: n8n
+
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
