@@ -134,3 +134,8 @@ spec:
                 name: n8n
                 port:
                   number: 5678
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: n8n
