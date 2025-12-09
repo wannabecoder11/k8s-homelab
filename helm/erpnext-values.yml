@@ -347,9 +347,9 @@ jobs:
 
   createSite:
     # jobName: ""
-    enabled: false
+    enabled: true
     forceCreate: false
-    siteName: "erp.cluster.local"
+    siteName: "erpnext.rrk.duckdns.org"
     adminPassword: "changeit"
     adminExistingSecret: ""
     adminExistingSecretKey: "password"
