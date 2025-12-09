@@ -12,7 +12,7 @@ spec:
       helm:  # ← Your local values
         releaseName: erpnext
         valueFiles:
-        - $values/helm/erpnext-values.yaml  # ← Path relative to YOUR repo root
+        - $values/helm/erpnext-values.yml  # ← Path relative to YOUR repo root
     - repoURL: https://github.com/wannabecoder11/k8s-homelab.git
       targetRevision: "HEAD"
       ref: values
