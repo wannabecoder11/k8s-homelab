@@ -39,9 +39,9 @@ spec:
                 name: pihole-nebula-sync
           env:
             - name: FULL_SYNC
-              value: true
+              value: 'true'
             - name: RUN_GRAVITY
-              value: true
+              value: 'true'
             - name: CRON
               value: "*/5 * * * *"
       volumes:
