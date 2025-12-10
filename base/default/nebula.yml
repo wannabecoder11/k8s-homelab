@@ -16,34 +16,24 @@ spec:
         app: nebula
     spec:
       containers:
-      - name: nebula-sync
-        image: ghcr.io/lovelaze/nebula-sync:latest
-        resources:
-            limits:
-              cpu: "4"
-              memory: 4Gi
-        envFrom:
-          - secretRef:
-              name: pihole-nebula-sync
-        env:
-          - name: FULL_SYNC
-            value: "true"
-          - name: RUN_GRAVITY
-            value: "true"
-          - name: CRON
-            value: "*/5 * * * *"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: nebula
-  labels:
-    app: nebula
-spec:
-  selector:
-    app: nebula
-  ports:
-    - protocol: TCP
-      port: 3000
-      targetPort: 3000
-  type: ClusterIP
+        - name: nebula
+          image: ghcr.io/lovelaze/nebula-sync:latest
+          envFrom:
+            - secretRef:
+                name: pihole-nebula-sync
+          env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+            - name: UMASK
+              value: "000"
+            - name: TZ
+              value: "Asia/Kolkata"
+            - name: FULL_SYNC
+              value: "true"
+            - name: RUN_GRAVITY
+              value: "true"
+            - name: CRON
+              value: "*/5 * * * *"
+
