@@ -7,7 +7,7 @@ spec:
   type: ExternalName
   externalName: 192.168.1.3
   ports:
-    - port: 8123   # Or the destination port
+    - port: 8123 # Or the destination port
       targetPort: 8123
 
 ---
@@ -29,7 +29,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: home-assistant-service 
+                name: home-assistant-service
                 port:
                   number: 8123
 
@@ -42,7 +42,7 @@ spec:
   type: ExternalName
   externalName: 192.168.1.3
   ports:
-    - port: 8006   # Or the destination port
+    - port: 8006 # Or the destination port
       targetPort: 8006
 
 # using ingressRoute traefik CRD as insecureSkipVerify is complicated in k8s native ingress object
@@ -85,7 +85,7 @@ spec:
   type: ExternalName
   externalName: 192.168.1.3
   ports:
-    - port: 8096   # Or the destination port
+    - port: 8096 # Or the destination port
       targetPort: 8096
 
 ---
@@ -106,7 +106,7 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: jellyfin-service 
+                name: jellyfin-service
                 port:
                   number: 8096
 ---
@@ -140,10 +140,10 @@ spec:
             pathType: Prefix
             backend:
               service:
-                name: immich-service 
+                name: immich-service
                 port:
                   number: 2283
- 
+
 ---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
@@ -163,3 +163,36 @@ spec:
       - immich.rrk.duckdns.org
     customResponseHeaders:
       Access-Control-Allow-Origin: homer.rrk.duckdns.org
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: scrutiny-service
+spec:
+  type: ExternalName
+  externalName: 192.168.1.3
+  ports:
+    - port: 8180 # Or the destination port
+      targetPort: 8180
+
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: scrutiny-ingress
+  annotations:
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
+
+spec:
+  rules:
+    - host: scrutiny.rrk.duckdns.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: scrutiny-service
+                port:
+                  number: 8180
