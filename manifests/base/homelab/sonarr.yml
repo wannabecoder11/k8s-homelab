@@ -1,25 +1,25 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: radarr
+  name: sonarr
   labels:
-    app: radarr
+    app: sonarr
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: radarr
+      app: sonarr
   template:
     metadata:
       labels:
-        app: radarr
+        app: sonarr
     spec:
       containers:
-        - name: radarr
-          image: linuxserver/radarr:latest
+        - name: sonarr
+          image: linuxserver/sonarr:latest
           ports:
-            - containerPort: 7878
+            - containerPort: 8989
           env:
             - name: PUID
               value: "1000"
@@ -30,65 +30,59 @@ spec:
             - name: TZ
               value: "Asia/Kolkata"
           volumeMounts:
-            - name: config
+            - name: sonarr-config-pvc
               mountPath: /config
             - name: media
               mountPath: /Media
       volumes:
-        - name: config
-          persistentVolumeClaim:
-            claimName: radarr-config-pvc
         - name: media
           hostPath:
             path: /media/Media
             type: Directory
+  volumeClaimTemplates:
+    - metadata:
+        name: sonarr-config-pvc
+        namespace: homelab
+      spec:     
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 5Gi
+        storageClassName: local-path # Replace with your CSI driver’s StorageClass name
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: radarr
+  name: sonarr
   labels:
-    app: radarr
+    app: sonarr
 spec:
   selector:
-    app: radarr
+    app: sonarr
   ports:
     - protocol: TCP
-      port: 7878
-      targetPort: 7878
-  type: ClusterIP
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: radarr-config-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: local-path-retain # Replace with your CSI driver’s StorageClass name
+      port: 8989
+      targetPort: 8989
+  clusterIP: None
 
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: radarr-ingress
+  name: sonarr-ingress
+  namespace: homelab
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   rules:
-    - host: radarr.rrk.duckdns.org
+    - host: sonarr.rrk.duckdns.org
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: radarr
+                name: sonarr
                 port:
-                  number: 7878
-
+                  number: 8989

@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: syncthing
+  namespace: homelab
   labels:
     app: syncthing
 spec:
@@ -60,6 +61,8 @@ apiVersion: v1
 kind: Service
 metadata:
   name: syncthing
+  namespace: homelab
+
   labels:
     app: syncthing
 spec:
@@ -81,6 +84,8 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  namespace: homelab
+
   name: syncthing-webui
   labels:
     app: syncthing
@@ -97,6 +102,8 @@ spec:
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
+  namespace: homelab
+
   name: syncthing-ingress
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure

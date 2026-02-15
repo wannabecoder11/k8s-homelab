@@ -3,10 +3,11 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: homepage
+  namespace: homelab
   labels:
     app: homepage
 spec:
-  replicas: 1
+  replicas: 0
   selector:
     matchLabels:
       app: homepage
@@ -66,6 +67,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: homepage
+  namespace: homelab
   labels:
     app: homepage
 spec:
@@ -82,6 +84,7 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: homepage-ingress
+  namespace: homelab
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"

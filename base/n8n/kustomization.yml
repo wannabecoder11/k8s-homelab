@@ -1,3 +1,0 @@
-resources:
-  - n8n.yml
-  - n8n-postgres.yml

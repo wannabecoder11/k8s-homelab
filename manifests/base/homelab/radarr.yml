@@ -1,91 +1,88 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: qbitorrent
-  labels:
-    app: qbitorrent
+  namespace: homelab
+  name: radarr
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: qbitorrent
+      app: radarr
   template:
     metadata:
       labels:
-        app: qbitorrent
+        app: radarr
     spec:
       containers:
-        - name: qbitorrent
-          image: ghcr.io/hotio/qbittorrent
+        - name: radarr
+          image: linuxserver/radarr:latest
           ports:
-            - containerPort: 8080
+            - containerPort: 7878
           env:
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
             - name: UMASK
               value: "000"
             - name: TZ
               value: "Asia/Kolkata"
-
           volumeMounts:
-            - name: config
-              mountPath: "/config"
+            - name: radarr-config-pvc
+              mountPath: /config
             - name: media
               mountPath: /Media
       volumes:
-        - name: config
-          persistentVolumeClaim:
-            claimName: qbitorrent-config-pvc
         - name: media
           hostPath:
             path: /media/Media
             type: Directory
-
+  volumeClaimTemplates:
+    - metadata:
+        name: radarr-config-pvc
+      spec:     
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi
+        storageClassName: local-path-retain # Replace with your CSI driver’s StorageClass name
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: qbitorrent
+  name: radarr
+  namespace: homelab
   labels:
-    app: qbitorrent
+    app: radarr
 spec:
   selector:
-    app: qbitorrent
+    app: radarr
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
-  type: ClusterIP
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: qbitorrent-config-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 100Mi
-  storageClassName: local-path-retain # Replace with your CSI driver’s StorageClass name
+      port: 7878
+      targetPort: 7878
+  clusterIP: None
 
 ---
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: qbitorrent-ingress
+  name: radarr-ingress
+  namespace: homelab
   annotations:
     traefik.ingress.kubernetes.io/router.entrypoints: websecure
     traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   rules:
-    - host: qb.rrk.duckdns.org
+    - host: radarr.rrk.duckdns.org
       http:
         paths:
           - path: /
             pathType: Prefix
             backend:
               service:
-                name: qbitorrent
+                name: radarr
                 port:
-                  number: 8080
+                  number: 7878
+

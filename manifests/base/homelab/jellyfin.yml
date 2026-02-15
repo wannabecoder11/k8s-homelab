@@ -1,10 +1,9 @@
 ---
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: jellyfin
-  labels:
-    app: jellyfin
+  namespace: homelab
 spec:
   replicas: 1
   selector:
@@ -32,7 +31,7 @@ spec:
             - name: TZ
               value: "Asia/Kolkata"
           volumeMounts:
-            - name: config-volume
+            - name: jellyfin-config-pvc
               mountPath: /config
             - name: tvshows-volume
               mountPath: /data/tvshows
@@ -47,9 +46,6 @@ spec:
             # - name: renderdri
             #   mountPath: /dev/dri/renderD128
       volumes:
-        - name: config-volume
-          persistentVolumeClaim:
-            claimName: jellyfin-config-pvc
         - name: tvshows-volume
           hostPath:
             path: /media/Media/Series
@@ -74,17 +70,29 @@ spec:
         #   hostPath:
         #     path: /dev/dri/renderD128
         #     type: Directory
-      
+  volumeClaimTemplates:
+    - metadata:
+        name: jellyfin-config-pvc
+      spec: 
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 3Gi
+        storageClassName: local-path-retain # Replace with your CSI driver’s StorageClass name
 ---
 apiVersion: v1
-kind: PersistentVolumeClaim
+kind: Service
 metadata:
-  name: jellyfin-config-pvc
+  namespace: homelab
+  name: jellyfin
+  labels:
+    app: jellyfin
 spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: local-path-retain # Replace with your CSI driver’s StorageClass name
+  selector:
+    app: jellyfin
+  ports:
+    - protocol: TCP
+      port: 8096
+      targetPort: 8096
+  clusterIP: None
 
