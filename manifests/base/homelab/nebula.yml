@@ -37,5 +37,4 @@ spec:
             - name: RUN_GRAVITY
               value: "true"
             - name: CRON
-              value: "*/5 * * * *"
-
+              value: "*/1 * * * *"

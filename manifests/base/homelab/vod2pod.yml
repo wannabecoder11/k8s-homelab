@@ -1,0 +1,174 @@
+---
+# ============================================================
+# CONFIGMAP — non-sensitive environment config
+# ============================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vod2pod-config
+  namespace: homelab
+data:
+  TZ: "Asia/Kolkata"
+  MP3_BITRATE: "192"
+  TRANSCODE: "true"
+  SUBFOLDER: "/"
+  RUST_LOG: "INFO"
+  REDIS_ADDRESS: "redis" # matches the Redis Service name below
+  REDIS_PORT: "6379"
+
+---
+# ============================================================
+# REDIS — Deployment
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: homelab
+  labels:
+    app: redis
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: redis:6.2
+          args:
+            - redis-server
+            - --save
+            - "20"
+            - "1"
+            - --loglevel
+            - warning
+          ports:
+            - containerPort: 6379
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "redis-cli ping | grep PONG"
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "redis-cli ping | grep PONG"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 5
+
+---
+# ============================================================
+# REDIS — ClusterIP Service (internal only)
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  namespace: homelab
+spec:
+  selector:
+    app: redis
+  ports:
+    - port: 6379
+      targetPort: 6379
+
+---
+# ============================================================
+# VOD2POD — Deployment
+# ============================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vod2pod
+  namespace: homelab
+  labels:
+    app: vod2pod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vod2pod
+  template:
+    metadata:
+      labels:
+        app: vod2pod
+    spec:
+      containers:
+        - name: vod2pod
+          image: madiele/vod2pod-rss:latest
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: vod2pod-config
+          env:
+            - name: YT_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: vod2pod-api-keys
+                  key: YT_API_KEY
+            - name: TWITCH_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: vod2pod-api-keys
+                  key: TWITCH_SECRET
+            - name: TWITCH_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: vod2pod-api-keys
+                  key: TWITCH_CLIENT_ID
+
+---
+# ============================================================
+# VOD2POD — ClusterIP Service
+# ============================================================
+apiVersion: v1
+kind: Service
+metadata:
+  name: vod2pod
+  namespace: homelab
+spec:
+  selector:
+    app: vod2pod
+  ports:
+    - port: 8080
+      targetPort: 8080
+
+---
+# ============================================================
+# INGRESS — Traefik (mirrors your traefik labels)
+# Requires Traefik ingress controller installed in the cluster
+# ============================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: vod2pod-ingress
+  namespace: homelab
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: vod2pod.rrk.duckdns.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: vod2pod
+                port:
+                  number: 8080
