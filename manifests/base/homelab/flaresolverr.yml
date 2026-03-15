@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: flaresolverr
-          image: linuxserver/flaresolverr:latest
+          image: ghcr.io/flaresolverr/flaresolverr:latest #linuxserver/flaresolverr:latest
           ports:
             - containerPort: 8191
           env:
