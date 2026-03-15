@@ -7,7 +7,7 @@ metadata:
   labels:
     app: flaresolverr
 spec:
-  replicas: 0
+  replicas: 1
   selector:
     matchLabels:
       app: flaresolverr
@@ -30,13 +30,6 @@ spec:
               value: "000"
             - name: TZ
               value: "Asia/Kolkata"
-          volumeMounts:
-            - name: config
-              mountPath: /config
-      volumes:
-        - name: config
-          persistentVolumeClaim:
-            claimName: flaresolverr-config-pvc
 ---
 apiVersion: v1
 kind: Service
@@ -53,17 +46,3 @@ spec:
       port: 8191
       targetPort: 8191
   type: ClusterIP
-
----
-apiVersion: v1
-kind: PersistentVolumeClaim
-metadata:
-  name: flaresolverr-config-pvc
-spec:
-  accessModes:
-    - ReadWriteOnce
-  resources:
-    requests:
-      storage: 1Gi
-  storageClassName: local-path-retain # Replace with your CSI driver’s StorageClass name
-
