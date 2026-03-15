@@ -1,4 +1,7 @@
 # Traefik entryPoints configuration for HTTP and HTTPS.
+# Install the CRDs first
+# helm install traefik-crds traefik/traefik-crds -n traefik
+# helm upgrade --namespace=traefik traefik traefik/traefik -f values.yml --debug --version=37.4.0
 entryPoints:
   web:
     address: ":80"
